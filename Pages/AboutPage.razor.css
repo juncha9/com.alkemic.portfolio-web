@@ -1,0 +1,79 @@
+﻿.background{
+    background: var(--color-highlight);
+    transition: background-color ease-out 1.5s;
+}
+.about-page {
+    --font-size: 1em;
+    --font-size-head-sub: 2em;
+    color: var(--color-font-dark);
+    padding-top: 6em;
+    padding-bottom: 6em;
+}
+
+.content {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    max-width: 1024px;
+}
+@media screen and (max-width: 1280px) {    
+    .content{
+        width: 90%;
+    }
+}
+@media screen and (max-width: 768px) {
+    .content{
+        width: 100%;
+        max-width: unset;
+    }
+}
+.section {
+    display: flex;
+    flex-direction: column;
+    margin-top: 30px;
+}
+@media screen and (max-width:768px) {
+    .section {
+        margin: 8px 0px;
+    }
+}
+.section--title {
+    font-size: 3em;
+    font-weight: 700;
+    user-select: none;
+}
+@media screen and (max-width:768px) {
+    .section--title {
+        font-size: 2.25em;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}
+
+.section--content {
+    background: #FFFFFF;
+    color: var(--color-black);
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+    padding-top: 30px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 30px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+@media screen and (max-width:1024px) {
+    .section--content {
+        padding-top: 30px;
+        padding-bottom: 30px;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
+@media screen and (max-width:768px) {
+    .section--content {
+        border-radius: unset;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}

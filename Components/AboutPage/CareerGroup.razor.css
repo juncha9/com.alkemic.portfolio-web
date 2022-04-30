@@ -1,0 +1,74 @@
+﻿.career-item{
+    margin-bottom: 1.5em;
+}
+.title-group {
+    display: grid;
+    grid-template: "title date"
+                   "line line"
+                   "sub sub";
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 2px auto;
+    margin-bottom: 1em;
+}
+
+@media screen and (max-width:768px)
+{
+    .title-group {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+    }        
+}
+
+.title {
+    grid-area: title;
+    color: var(--color-black);
+    font-size: 1.875em;
+    font-weight: 700;
+    align-self: end;
+    line-height: 40px;
+}
+@media screen and (max-width:768px) {
+    .title {
+        align-self: unset;
+        line-height: 32px;
+    }
+}
+
+.sub {
+    grid-area: sub;
+    color: var(--color-highlight);
+    font-size: 1.5em;
+    line-height: 40px;
+}
+@media screen and (max-width:768px) {
+    .sub {
+        line-height: 28px;
+    }
+}
+
+.line {
+    grid-area: line;
+    background: var(--color-black-sub);
+}
+@media screen and (max-width:768px) {
+    .line {
+        display: none;
+    }
+}
+
+.date {
+    grid-area: date;
+    align-self: end;
+    color: var(--color-black-sub);
+    font-size: 1em;
+    text-align: right;
+    padding-bottom: 2.5px;
+    line-height: 20px;
+    white-space: nowrap;
+}
+@media screen and (max-width:768px) {
+    .date {
+        align-self: unset;
+    }
+}

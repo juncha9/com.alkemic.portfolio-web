@@ -1,0 +1,150 @@
+﻿@page "/project";
+@using Alkemic.PortfolioWeb.Models
+@using Microsoft.EntityFrameworkCore
+@using Alkemic.PortfolioWeb.Components.ProjectPage
+
+<PageTitle>Projects - juncha9</PageTitle>
+
+<div class="background-dark" />
+@if(authState == AuthState.Allowed) {
+
+<PageDecorator Title="PROJECT" Sub="@serif"/>
+<div class="project-page">
+<Morph />
+@if(isLoading == true)
+{
+	<div class="loading-spinner-side spinner-border" />
+}
+else
+{
+	<div id="fullpage">
+		@foreach(ProjectEntity data in ProjectEntities) 
+		{
+			<div class="section">
+				<ProjectViewer Project=data />
+			</div>
+		}
+		<div class="section">
+			<div class="content content--foot">
+				<div class="end-text">Thank You</div>
+			</div>
+		</div>
+	</div>
+}
+</div>
+}
+
+<PageButton 
+	Prev=@(new PageData{Link="/intro", Name="Introduction"}) 
+	Next=@(new PageData{Link="/about", Name="AboutMe"})  
+	Theme="@Theme.Dark"/>
+
+@inherits RestrictPageComponent
+@code {
+
+	private const string INIT_PAGE = "projectPageHandler.init";
+	private const string DISPOSE_PAGE = "projectPageHandler.dispose";
+
+	[Inject]
+	private ILogger<ProjectPage> logger { get; set; }
+
+	[Inject]
+	IDbContextFactory<PortfolioContext> contextFactory { get; set; }
+
+	private string serif = "";
+
+	private List<string> serifs = new List<string>
+	{
+		"No sweat no sweet",
+		"Whatever you do\nmake it pay",
+		"Life is venture\nor nothing",
+	};
+
+	private List<ProjectEntity> ProjectEntities { get; set; } = new List<ProjectEntity>();
+
+	private bool isWaitDB = false;
+	private bool isFullpageInited = false;
+
+	protected override bool isLoading => base.isLoading || isWaitDB;
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		isWaitDB = true;
+		isFullpageInited = false;
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if(firstRender == true)
+		{
+			serif = serifs.GetRandomOne();
+		}
+		await base.OnAfterRenderAsync(firstRender);
+		if(firstRender == true)
+		{
+			
+			await LoadEntities();
+		}
+		else if(authState == AuthState.Allowed)
+		{
+			if(isFullpageInited == false && isLoading == false)
+			{
+				if(string.IsNullOrWhiteSpace(Server.Config.FullpageKey) == true)
+				{
+					LogError($"[{GetType().Name}] Failed to init fullpage, Key is not exist");
+				}
+				else
+				{	
+					isFullpageInited = true;	
+					await jsRuntime.TryInvokeAction(INIT_PAGE, Server.Config.FullpageKey);
+				}
+			}
+		}
+	}
+
+	public override async ValueTask DisposeAsync()
+	{
+		if(isFullpageInited == true)
+		{
+			await jsRuntime.TryInvokeAction(DISPOSE_PAGE);
+			isFullpageInited = false;
+		}
+		await base.DisposeAsync();
+	}
+
+	protected async Task LoadEntities()
+	{
+		try
+		{
+			isWaitDB = true;
+			var context = await contextFactory.CreateDbContextAsync();
+			if (context == null) throw new Exception($"Cannot create DB {nameof(PortfolioContext)}");
+
+			var query = context.ProjectEntities.Include(project => project.Career)
+										 .Where(project => project.EntrySequence.HasValue == true)
+										 .OrderByDescending(p => p.EntrySequence);
+#if DEBUG
+			logger.LogDebug($"[{GetType().Name}:{RemoteIP}] *** SQL ***\n{query.ToQueryString()}\n");
+#endif
+			var projects = await query.ToListAsync();
+			ProjectEntities.Clear();
+			ProjectEntities.AddRange(projects);
+#if DEBUG
+			logger.LogDebug($"[{GetType().Name}:{RemoteIP}] Success to load data on DB");
+#endif
+		}
+		catch(Exception ex)
+		{
+			logger.LogError($"[{GetType().Name}] Failed to load data on DB, Ex: {ex}");
+			LogError($"[{GetType().Name}] Failed to load data");
+		}
+		finally
+		{
+			isWaitDB = false;
+			StateHasChanged();
+		}
+	}
+
+
+}

@@ -1,0 +1,82 @@
+﻿@using Alkemic.PortfolioWeb.Models
+@using Alkemic.PortfolioWeb
+@using Markdig
+ 
+<div class="project-item">
+    <div class="line-top noselect"></div>
+    <div class="content">
+        <div class="title-group">
+            <div class="title">@Data.FullName</div>
+            <div class="date noselect">@GetPeriodText(Data)</div>
+            <div class="button">
+                @if(Data.VideoURL != null)
+                {
+                    <a href=@($"https://youtu.be/{Data.VideoURL}") class="button-item">
+                        <i class="fa-solid fa-circle-play"></i>
+                        <div>영상보기</div>
+                    </a>
+                }
+            </div>
+        </div>
+        <div class="work">@Data.Work</div>
+        @if(Data.ProjectStacks != null && Data.ProjectStacks.Count > 0)
+        {
+            <div class="stack">@Data.ProjectStacks.ToText(x => x.AbilityStack?.Name ?? "")</div>    
+        }
+        <div class="desc">
+            @if(Data.Summary is not null)
+            {
+                <div class="desc--title">개요</div>
+                <div class="desc--text">
+                    @summary
+                </div>
+            }
+            @if(Data.Cooperation is not null)
+            {
+                <div class="desc--title">연계업체</div>
+                <div class="desc--text">
+                    @cooperation
+                </div>
+            }
+            @if(Data.Detail is not null)
+            {
+                <div class="desc--title">프로젝트 상세</div>
+                <div class="desc--text">
+                    @detail
+                </div>
+            }    
+        </div>
+    </div>
+</div>
+
+@inherits BaseComponent
+@code {
+
+    [Parameter]
+    [EditorRequired]
+    public ProjectEntity Data { get; set; }
+
+    private MarkupString summary => (MarkupString)Markdown.ToHtml(Data?.Summary??"");
+
+    private MarkupString cooperation => (MarkupString)Markdown.ToHtml(Data?.Cooperation??"");
+
+    private MarkupString detail => (MarkupString)Markdown.ToHtml(Data?.Detail??"");
+
+    private string GetPeriodText(ProjectEntity project)
+    {
+        if(project.StartDate.HasValue == true && project.EndDate.HasValue == true)
+        {
+            return $"{project.StartDate.Value.ToString("yyyy MM")} - {project.EndDate.Value.ToString("yyyy MM")}";
+        }
+        else if(project.StartDate.HasValue == true)
+        {
+            return $"{project.StartDate.Value.ToString("yyyy")}"; 
+        }
+        else
+        {
+            return "";
+        }
+    }
+
+    
+}

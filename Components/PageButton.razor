@@ -1,0 +1,52 @@
+﻿@{
+    if(authState == AuthState.Allowed)
+    {   
+        <div class="page-button-group nodrag">
+        @if(Prev != null)
+        {
+            <div class="page-button">
+                <NavLink href="@(Prev.Link)">
+                    <div class="icon prev @(CLASS_Theme)">    
+		                <i class= "fa fa-angle-left"></i>
+                    </div>
+                </NavLink>
+                <div class="name prev @(CLASS_Theme)">@Prev.Name</div>
+            </div>
+        }
+
+        @if(Next != null)
+        {
+            <div class="page-button">
+                <NavLink href="@(Next.Link)">
+                    <div class="icon next @(CLASS_Theme)">
+		                <i class= "fa fa-angle-right"></i>
+                    </div>
+                </NavLink>
+                <div class="name next @(CLASS_Theme)">@Next.Name</div>
+            </div>              
+        }        
+        </div>
+    }
+}
+
+@inherits AuthComponent
+@code {
+
+    [Parameter]
+    public Theme Theme { get; set; } = Theme.Dark;
+
+    [Parameter]
+    public PageData Prev { get; set; } = null;
+
+    [Parameter]
+    public PageData Next { get; set; } = null;
+
+    private string CLASS_Theme
+    {
+        get
+        {
+            if (this.Theme == Theme.Dark) return "dark";
+            else return "light";
+        }
+    }
+}

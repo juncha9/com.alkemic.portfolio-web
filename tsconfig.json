@@ -1,0 +1,11 @@
+{
+	"compilerOptions": {
+		"module": "CommonJS",
+		"target": "ES5",
+		"allowJs": true,
+		"baseUrl": ".",
+		"lib": [ "es2015", "es6", "esnext", "dom" ],
+		"moduleResolution": "Node"
+	},
+	"include": [ "./webpack/**/*"]
+}

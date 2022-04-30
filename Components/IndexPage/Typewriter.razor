@@ -1,0 +1,100 @@
+﻿@using Newtonsoft.Json.Linq
+<style>
+	.typewrite {
+		--color-typewrite: @(authState == AuthState.Allowed ? "#FFFFFF":"#303030");
+		--color-cursor-shown: @(authState == AuthState.Allowed ? "#FFFFFFFF":"#303030FF");
+		--color-cursor-hidden: @(authState == AuthState.Allowed ? "#FFFFFF00":"#30303000");
+	}
+	#wrap {
+		padding-right: 0.125em;
+		border-right: 0.06em solid;
+		animation: CursorBlink 0.75s ease infinite;
+	}
+	@@keyframes CursorBlink {
+		0% {
+			border-color: var(--color-cursor-shown);
+		}
+		10% {
+			border-color: var(--color-cursor-shown);
+		}
+		75% {
+			border-color: var(--color-cursor-hidden);
+		}
+		100% {
+			border-color: var(--color-cursor-hidden);
+		}
+	}
+</style>
+<div class="typewrite noselect" data-period="2000" data-type='@TypeData'>
+	<span class="wrap"></span>
+</div>
+
+@inherits AuthComponent
+@code {
+
+	private const string TYPEWRITE_START = "typewriteHandler.start";
+	private const string TYPEWRITE_STOP = "typewriteHandler.stop";
+
+	public string[] TypeTexts
+	{
+		get
+		{
+			switch(this.authState)
+			{
+				case AuthState.Allowed:
+					return new string[]
+					{
+						"Hi, Im SaeGyeol",
+						"I Love to Make Something"
+					};
+
+				case AuthState.Restricted:
+					return new string[]
+					{
+						"You are Restricted"
+					};
+				case AuthState.None:
+				default:
+					return new string[]
+					{
+						"Please Insert Passcode"
+					};
+			}
+		}
+	}
+
+	private bool isTypewriteStarted = false;
+
+	public string TypeData
+	{
+		get
+		{
+			var array = JArray.FromObject(TypeTexts);
+			return $"{array?.ToString()}";
+		}
+	}
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		isTypewriteStarted = false;
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+		isTypewriteStarted = true;
+		await jsRuntime.TryInvokeAction(TYPEWRITE_START);
+
+	}
+
+	public override async ValueTask DisposeAsync()
+	{
+		if(isTypewriteStarted == true)
+		{
+			await jsRuntime.TryInvokeAction(TYPEWRITE_STOP);
+			isTypewriteStarted = false;
+		}
+		await base.DisposeAsync();
+	}
+}

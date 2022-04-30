@@ -1,0 +1,39 @@
+﻿<div class="head-group">
+    <div class="title noselect">
+        <div class="name">@nameKOR</div>
+        <div class="sub-name">@nameENG</div>
+    </div>
+    <div class="info">
+        <div>
+            <i class="fa-solid fa-phone noselect"> </i>
+            <span>@tel</span >
+        </div>
+        <div>
+            <i class="fa-solid fa-envelope noselect"> </i>
+            <span>@email</span >
+        </div>
+    </div>
+    <div class="meta noselect">
+        @foreach(var item in Metatags)
+        {
+            <div>#@item</div>       
+        }
+    </div>
+</div >
+
+@code {
+    private string nameKOR = "장새결";
+    private string nameENG = "SaeGyeol Jang";
+
+    private string tel = "+82 10 9261 7566";
+
+    private string email = "juncha9@gmail.com";
+
+    private List<string> Metatags = new List<string>
+    {
+        "도전과함께라면",
+        "새로운기술은환영이야",
+        ".NET개발자"
+    };
+
+}

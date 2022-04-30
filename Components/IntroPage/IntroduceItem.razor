@@ -1,0 +1,19 @@
+﻿@using Alkemic.PortfolioWeb.Models
+@using Markdig
+
+<div class="introduce-item">
+    <div class="content">
+        <div class="desc">
+            @description
+        </div>
+    </div>
+</div>
+
+@code {
+  
+    private MarkupString description => (MarkupString)Markdown.ToHtml(Data?.Description??"");
+
+    [Parameter]
+    public IntroduceEntity Data { get; set; }
+
+}

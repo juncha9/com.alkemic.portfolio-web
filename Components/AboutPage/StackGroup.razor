@@ -1,0 +1,42 @@
+﻿@using Alkemic.PortfolioWeb.Models
+@using Markdig
+
+@foreach(var stackData in Datas)
+{
+    MarkupString description = (MarkupString)Markdown.ToHtml(stackData?.Description ?? "");
+    <div class="stack-item">
+        <div class="icon noselect">
+            <img src=@GetImageURL(stackData) />
+        </div>
+        <div class="title">
+            <span>@stackData.Name</span>
+            @if(stackData.IsFavorite == true)
+            {
+                <i class="fa-solid fa-star favorite noselect"></i>
+            }
+        </div>
+        <div class="line noselect"></div>
+        <div class="desc">
+            @description
+        </div>
+    </div>
+}
+
+@inherits BaseComponent
+@code {
+    [Parameter]
+    [EditorRequired]
+    public List<AbilityStackEntity> Datas { get; set; } = null;
+
+    private string GetImageURL(AbilityStackEntity stack)
+    {
+        if(string.IsNullOrWhiteSpace(stack.ID) == false)
+        {
+            return $"/img/{stack.ID}.svg";
+        }
+        else
+        {
+            return "/img/other.svg";
+        }
+    }
+}

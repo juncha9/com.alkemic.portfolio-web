@@ -1,0 +1,37 @@
+﻿.project-page {
+    color: var(--color-white);
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.content--foot {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-content: center;
+    justify-content: center;
+    min-height: 600px;
+    height: 100vh;
+    pointer-events: none;
+}
+
+.end-text {
+    font-family: 'Raleway';
+    font-size: 8em;
+    font-weight: 700;
+    white-space: nowrap;
+    text-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+}
+
+@media screen and (max-width:1023px) {
+    .end-text {
+        font-size: 6em;
+    }
+}
+@media screen and (max-width:768px)
+{
+    .end-text {
+        font-size: 4em;
+    }
+}

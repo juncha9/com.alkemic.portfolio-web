@@ -1,0 +1,56 @@
+﻿@using Alkemic.PortfolioWeb.Models
+@using Markdig
+<div class="content content--layout" id="@ContentID">
+	<iframe class="content--frame nodrag" 
+		src=@($"https://www.youtube.com/embed/{Project.VideoURL}")
+		frameborder="0" 
+		width="700" height="393"
+		align="middle"
+		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+	</iframe>
+	<h3 class="content--title">@Project.Name</h3>
+	<div class="content--desc-left noselect">@Project.StartDate?.ToString("yyyy")</div>
+	<div class="content--desc">
+		@summary
+	</div>
+	<div class="content--desc-bottom">@Project.Career?.Name</div>
+</div>
+
+@inherits BaseComponent
+@code {
+
+	private const string TILT_VIEWER_SET = "tiltViewerHandler.set";
+
+	[Parameter]
+	public ProjectEntity Project { get; set; }
+
+	private MarkupString summary => (MarkupString)Markdown.ToHtml(Project?.Summary??"");
+
+	private string ContentID { get; set; } = "";
+
+	private object viewerObject { get; set; }
+
+	private bool isTiltSet = false;
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		ContentID = Guid.NewGuid().ToString();
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+
+		if(firstRender == true)
+		{
+			if(isDesktop == true && isTiltSet == false)
+			{
+				await jsRuntime.InvokeVoidAsync(TILT_VIEWER_SET, ContentID);
+				isTiltSet = true;	
+			}
+		}
+
+	}
+
+}

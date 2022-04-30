@@ -1,0 +1,19 @@
+﻿@using Alkemic.PortfolioWeb
+
+@inherits LayoutComponentBase
+
+<PageTitle>Portfolio - juncha9</PageTitle>
+
+<div class="page">
+    <AllowViewer />
+    <ConnectInfoViewer />
+    <main>
+        <Authorizer>
+            @Body
+        </Authorizer>
+    </main>
+</div>
+
+@code {
+
+}

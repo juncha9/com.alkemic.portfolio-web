@@ -1,0 +1,27 @@
+﻿<div class="page-deco-group noselect">
+    <div class="text main title">@Title</div>
+    <div class="text main sub">
+        @{
+            if (Sub.Contains("\n") == true)
+            {
+                foreach(var text in Sub.Split("\n"))
+                {
+                    <div>@text</div>
+                }
+            }
+            else { <div>@Sub</div> }
+        }
+    </div>
+    <div class="text alt title-alt">@Title</div>
+</div>
+
+@inherits BaseComponent
+@code {
+
+    [Parameter]
+    public string Title { get; set; } = "";
+
+    [Parameter]
+    public string Sub { get; set; } = "";
+
+}

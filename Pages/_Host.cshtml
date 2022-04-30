@@ -1,0 +1,30 @@
+﻿@page "/"
+@namespace Alkemic.PortfolioWeb.Pages
+@using Microsoft.AspNetCore.Mvc.Razor
+@using Microsoft.AspNetCore.Mvc.RazorPages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "_Layout";
+
+    string USER_AGENT = "User-Agent";
+    string X_FORWARDED_FOR = "X-Forwarded-For";
+
+    string UserAgent = ""; 
+    if (HttpContext.Request.Headers.ContainsKey(USER_AGENT) == true)
+    {
+        UserAgent = HttpContext.Request.Headers[USER_AGENT].ToString();
+    }
+
+    string RemoteIP = "";
+    if (HttpContext.Request.Headers.ContainsKey(X_FORWARDED_FOR) == true && HttpContext.Request.Headers[X_FORWARDED_FOR].Count > 0)
+    {
+        RemoteIP = HttpContext.Request.Headers[X_FORWARDED_FOR][0];
+    }
+    else
+    {
+        RemoteIP = HttpContext.Connection.RemoteIpAddress?.MapToIPv4()?.ToString() ?? "";
+    }
+}
+<app>
+   <component type="typeof(App)" render-mode="ServerPrerendered" param-RemoteIP="RemoteIP" param-UserAgent="UserAgent"/>
+</app>

@@ -1,0 +1,70 @@
+﻿
+
+<div class="login-panel">
+	<div class="panel">
+		@if (isLoading == true)
+		{
+			<span class="spinner-border" style="width: 50px; height:50px;"></span>
+		}
+		else
+		{
+			switch (authState)
+			{
+				case AuthState.Restricted:
+					<div class="info">@authAttempt.ExpireTime.ToString("F") 까지 제한되었습니다</div>
+					break;
+				case AuthState.None:
+					<form action="#" onsubmit="return false">
+						<div class="input-group">
+							<input type="password" class="form-control" name="passcode" @bind="passcodeValue" placeholder="패스코드를 입력해주세요" />
+							<button type="submit" class="btn btn-secondary" id="button-addon2" onclick="@Login">확인</button>
+						</div>
+					</form>
+					@if(authAttempt != null && authAttempt.IsRestricted == false)
+					{
+						<div class="info">제한까지 @(ServerDefine.COUNT_RESTRICT - authAttempt.Count + 1)회 남았습니다</div>
+					}
+					break;
+				case AuthState.Allowed:
+					<button class="btn btn-primary" type="button" onclick="@Logout">로그아웃</button>
+					break;
+			}
+		}
+	</div>
+</div>
+@inherits AuthComponent
+@code
+{
+	private string passcodeValue = "";
+
+	private bool isWaiting = false;
+
+	protected override bool isLoading 
+	{
+		get => base.isLoading || isWaiting == true;
+	}
+
+	private async Task Login()
+	{
+		isWaiting = true;
+		StateHasChanged();
+		await authHandler.Login(passcodeValue);
+		passcodeValue = "";
+		isWaiting = false;
+		StateHasChanged();
+	}
+
+	private async Task Logout()
+	{
+		isWaiting = true;
+		StateHasChanged();
+		await authHandler.Logout();
+		isWaiting = false;
+		StateHasChanged();
+	}
+
+	
+
+
+
+}

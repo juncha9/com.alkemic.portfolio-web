@@ -1,0 +1,47 @@
+﻿@font-face {
+    font-family: 'Pretendard Variable';
+    font-weight: 45 920;
+    font-style: normal;
+    font-display: swap;
+    src: local('Pretendard Variable'), url('../font/PretendardVariable.woff2') format('woff2-variations');
+}
+@font-face {
+    font-family: 'Abster';
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+    src: local('Abster'), url('../font/ABSTER 500.otf') format('opentype');
+}
+
+:root {
+    --bs-font-sans-serif: 'Pretendard Variable', -apple-system, sans-serif;
+    --bs-body-font-family: var(--bs-font-sans-serif);
+}
+
+html {
+    font-weight: 400;
+}
+
+.font-pretendard {
+    font-family: 'Pretendard Variable',
+        system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji" !important;
+}
+
+.font-montserrat {
+    font-family: 'Montserrat',
+        system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji" !important;
+}
+
+.font-racing-sans {
+    font-family: 'Racing Sans One', cursive, system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji" !important;
+}
+
+.font-abster {
+    font-family: 'Abster',
+        system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji" !important;
+}
+
+.font-raleway {
+    font-family: 'Raleway',
+        system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji" !important;
+}

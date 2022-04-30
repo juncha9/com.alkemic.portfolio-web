@@ -1,0 +1,94 @@
+﻿.head-group {
+    --font-size-meta: 1.25em;
+    display: grid;
+    align-content: center;
+    justify-content: center;
+    grid-template-columns: 1.5fr auto;
+    grid-template-rows: auto auto 2em;
+    grid-template-areas:
+        "title info"
+        "title info"
+        "title meta";
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 5px;
+    border-bottom: solid 3px white;
+}
+@media screen and (max-width:768px) {
+    .head-group {
+        display: flex;
+        flex-direction: column;
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-bottom: 15px;
+        border-bottom: dotted 4px white;
+    }
+}
+
+.title {
+    grid-area: title;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+}
+
+.name {
+    font-size: 8em;
+    line-height: 0.75em;
+    font-weight: 600;
+    justify-content: end;
+    white-space: nowrap;
+}
+@media screen and (max-width: 768px) {
+    .name {
+        font-size: 8em;
+        line-height: 80px;
+    }
+}
+
+.sub-name {
+    font-size: 3.125em;
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+@media screen and (max-width: 768px) {
+    .sub-name {
+        margin-bottom: 0.25em;
+    }
+}
+
+.info {
+    grid-area: info;
+    align-self: end;
+    justify-self: end;
+    font-size: 1.25em;
+    white-space: nowrap;
+}
+
+.info div i {
+    font-size: 0.875em;
+    margin-right: 0.5em;
+}
+
+@media screen and (max-width: 768px) {
+    .info {
+        align-self: unset;
+    }
+}
+
+.meta {
+    grid-area: meta;
+    align-self: end;
+    justify-self: end;
+    display: flex;
+    font-size: 1.125em;
+    white-space: nowrap;
+    gap: 1em;
+}
+
+@media screen and (max-width: 768px) {
+    .meta {
+        display: none;
+    }
+}

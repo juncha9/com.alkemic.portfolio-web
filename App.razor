@@ -1,0 +1,57 @@
+﻿@using Alkemic.PortfolioWeb.Pages
+
+<CascadingValue Name="RemoteIP" Value="@RemoteIP">
+<CascadingValue Name="UserAgent" Value="@UserAgent">
+    <Router AppAssembly="@typeof(App).Assembly" OnNavigateAsync=@RunOnNavigate>
+        <Found Context="routeData">
+            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p role="alert">죄송합니다, 이 주소에는 아무것도 없습니다.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingValue>
+</CascadingValue>
+
+@code
+{
+
+    [Inject]
+    protected IJSRuntime jsRuntime { get; set; }
+
+    [Parameter]
+    public string UserAgent { get; set; }
+
+    [Parameter]
+    public string RemoteIP { get; set; }
+
+    private bool isRendered = false;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if(firstRender == true)
+        {
+            isRendered = true;
+        }
+    }
+
+    private async Task RunOnNavigate(NavigationContext context)
+    {
+        
+        if (isRendered == false) return;
+        if(context.Path == "" || context.Path == "index" || context.Path == "project")
+        {
+            var result = await jsRuntime.TryInvokeFuncWithDefualt<bool>(IntroPage.DONUT_SPACE_IS_UNITY_STARTED, false);
+            if(result == true)
+            {
+                await jsRuntime.TryInvokeAction(IntroPage.DONUT_SPACE_DISPOSE);    
+            }    
+        }        
+    }
+
+}

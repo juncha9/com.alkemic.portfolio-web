@@ -1,0 +1,64 @@
+﻿@using Microsoft.EntityFrameworkCore
+@using Alkemic.PortfolioWeb.Models
+
+
+@foreach(var career in Datas)
+{
+    <div class="career-item"> 
+        <div class="title-group">
+            <div class="title">@career.Name</div>
+            <div class="line noselect"></div>
+            <div class="sub">@GetSubText(career)</div>
+            <div class="date noselect">@GetDateText(career)</div>
+        </div>
+        @if(career.Projects != null)
+        {
+            foreach(var project in career.Projects)
+            {
+                <CareerProjectItem Data=project />
+            }
+        }
+    </div>
+}
+
+@inherits BaseComponent
+@code {
+
+    [Parameter]
+    [EditorRequired]
+    public List<CareerEntity> Datas { get; set; } = null;
+
+    private string GetDateText(CareerEntity career)
+    {
+        if(career.StartDate.HasValue == true && career.EndDate.HasValue == true)
+        {
+            return $"{career.StartDate.Value.ToString("yyyy MM")} - {career.EndDate.Value.ToString("yyyy MM")}";
+        }
+        else if(career.StartDate.HasValue == true)
+        {
+            return $"{career.StartDate.Value.ToString("yyyy")}";
+        }
+        else
+        {
+            return "";
+        }
+    }
+
+    private string GetSubText(CareerEntity career)
+    {
+        if(career.Department is not null && career.Rank is not null)
+        {
+            return $"{career.Department}  /  {career.Rank}";
+        }
+        else if(career.Department is not null)
+        {
+            return $"{career.Department}";
+        }
+        else
+        {
+            return "";
+        }
+
+    }
+
+}

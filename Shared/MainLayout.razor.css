@@ -1,0 +1,25 @@
+main {
+    display: grid;
+    flex-direction: row;
+    grid-template-rows: 50px;
+    grid-template-columns: auto;
+}
+
+
+
+.sidebar {
+    position: fixed;
+    width: 50px;
+}
+
+
+@media screen and (max-width:50em) {
+
+    .sidebar {
+        width: 250px;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+    }
+
+}

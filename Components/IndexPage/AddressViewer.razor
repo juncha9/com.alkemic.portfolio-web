@@ -1,0 +1,18 @@
+﻿
+<div class="address-viewer noselect">
+    @if(authState == AuthState.Allowed)
+    {
+        <i class="fa-solid fa-link allow"></i>
+        <span class="allow">@RemoteIP</span>
+    }
+    else
+    {
+        <i class="fa-solid fa-link"></i>
+        <span>@RemoteIP</span>    
+    }
+</div>
+
+@inherits AuthComponent
+@code {
+
+}

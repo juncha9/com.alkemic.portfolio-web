@@ -1,0 +1,25 @@
+﻿.typewrite {
+    height: 1.375em;
+    font-weight: 700;
+    font-size: 6em;
+    text-align: center;
+    white-space: nowrap;
+    color: var(--color-typewrite);
+    overflow: hidden;
+}
+@media screen and (max-width: 1280px) {
+    .typewrite {
+        font-size: 4.75em;
+    }
+}
+@media screen and (max-width: 1024px) {
+    .typewrite {
+        font-size: 4em;
+    }
+}
+@media screen and (max-width:640px) {
+    .typewrite {
+        font-size: 2.675em;
+    }
+}
+

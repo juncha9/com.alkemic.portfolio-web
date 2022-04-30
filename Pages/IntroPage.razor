@@ -1,0 +1,193 @@
+﻿@page "/intro"
+@using Microsoft.EntityFrameworkCore
+@using Alkemic.PortfolioWeb.Models
+@using Alkemic.PortfolioWeb.Components.IntroPage
+
+<PageTitle>Introduction - juncha9</PageTitle>
+
+<div class="background-dark" />
+@if(this.authState == AuthState.Allowed) {
+    
+    <PageDecorator Title="INTRODUCE"/>
+
+    <div class="intro-page">
+    @if(useDonutSpace == true)
+    {
+        <canvas id="unity-canvas"></canvas>
+    }
+    else
+    {
+        <div id="background-intro"></div>
+    }
+
+    @if(isLoading == true)
+    {
+        <div class="loading-spinner-side spinner-border"></div>
+        <div class="loading-percent-side">@(loadPercent.ToString("0.00"))%</div>
+    }
+    else
+    {   
+        <div id="fullpage">
+            @foreach(var introduce in IntroduceEntities)
+            {
+                <div class="section">
+                    <IntroduceItem Data=introduce />
+                </div>
+            }
+        </div>
+    }
+    </div>
+}
+
+<PageButton 
+Prev=@(new PageData{Link="/index", Name="Home"}) 
+Next=@(new PageData{Link="/project", Name="Project"}) 
+Theme="@Theme.Dark" />
+
+@inherits RestrictPageComponent
+@code {
+    public const string PAGE_INIT = "introPageHandler.init";
+    public const string PAGE_DISPOSE = "introPageHandler.dispose";
+
+    public const string DONUT_SPACE_INIT = "donutSpaceHandler.init";
+    public const string DONUT_SPACE_DISPOSE = "donutSpaceHandler.dispose";
+    public const string DONUT_SPACE_IS_UNITY_STARTED = "donutSpaceHandler.isUnityStarted";
+    public const string DONUT_SPACE_ON_PAGE_CHANGED = "donutSpaceHandler.onPageChanged";
+
+    [Inject]
+    private ILogger<IntroPage> logger { get; set; }
+
+    [Inject]
+    private IDbContextFactory<PortfolioContext> contextFactory { get; set; }
+
+    private DotNetObjectReference<IntroPage>? bridge;
+
+    private bool isWaitUnityLoad = false;
+    private bool isWaitDB = false;
+
+    private bool useDonutSpace => isDesktop == true;
+
+    private bool isDonutSpaceInited = false;
+    private bool isFullpageInited = false;
+
+    private float loadPercent = 0f;
+
+    protected override bool isLoading => base.isLoading || 
+                                 isWaitUnityLoad == true || 
+                                 isWaitDB == true;
+
+    private CancellationTokenSource waitTaskCancelTokenSource = null;
+
+    private List<IntroduceEntity> IntroduceEntities { get; set; } = new List<IntroduceEntity>();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        bridge = DotNetObjectReference.Create(this);
+
+        isWaitDB = true;
+        isDonutSpaceInited = false;
+        isFullpageInited = false;
+        if(useDonutSpace == true)
+        {
+            isWaitUnityLoad = true;
+        }
+        else
+        {
+            isWaitUnityLoad = false;
+        }
+    } 
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if(firstRender == true)
+        {
+            await LoadEntities();
+        }
+        else if (authState == AuthState.Allowed)
+        {
+            if (useDonutSpace == true && isDonutSpaceInited == false)
+            {
+                isDonutSpaceInited = true;
+                await jsRuntime.TryInvokeAction(DONUT_SPACE_INIT, bridge);
+            }
+            if (isFullpageInited == false && isLoading == false)
+            {
+                if (string.IsNullOrWhiteSpace(Server.Config.FullpageKey) == true)
+                {
+                    LogError($"[{GetType().Name}] Failed to init fullpage, Key is not exist");
+                }
+                else
+                {
+                    isFullpageInited = true;
+                    await jsRuntime.TryInvokeAction(PAGE_INIT, Server.Config.FullpageKey, useDonutSpace);
+                }
+            }
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnUnityLoaded()
+    {
+        this.isWaitUnityLoad = false;
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public async Task OnLoadPercentUpdate(float value)
+    {
+        this.loadPercent = (value * 100);
+        StateHasChanged();
+    }
+
+    public override async ValueTask DisposeAsync()
+    {
+        waitTaskCancelTokenSource?.Cancel();
+        waitTaskCancelTokenSource?.Dispose();
+
+        if(isFullpageInited == true)
+        {
+            await jsRuntime.TryInvokeAction(PAGE_DISPOSE);
+            isFullpageInited = false;
+        }
+
+        bridge?.Dispose();
+        await base.DisposeAsync();
+    }
+
+    private async Task LoadEntities()
+    {
+        try
+        {
+            isWaitDB = true;
+            var context = await contextFactory.CreateDbContextAsync();
+            if (context == null) throw new Exception($"Cannot create DB {nameof(PortfolioContext)}");
+
+            var query = context.IntroduceEntities.OrderBy(introduce => introduce.ID);
+#if DEBUG
+            logger.LogDebug($"[{GetType().Name}:{RemoteIP}]\n*** SQL ***\n{query.ToQueryString()}\n");
+#endif
+            var introduces = await query.ToListAsync();
+            IntroduceEntities.Clear();
+            IntroduceEntities.AddRange(introduces);
+#if DEBUG
+            logger.LogDebug($"[{GetType().Name}:{RemoteIP}] Success to load data on DB");
+#endif
+        }
+        catch(Exception ex)
+        {
+            logger.LogError($"[{GetType().Name}:{RemoteIP}] Failed to load data on DB, Ex: {ex}");
+            LogError($"[{GetType().Name}] Failed to load data");
+        }
+        finally
+        {
+            isWaitDB = false;
+            StateHasChanged();
+        }
+    }
+
+
+
+
+}

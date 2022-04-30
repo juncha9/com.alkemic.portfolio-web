@@ -1,0 +1,106 @@
+﻿.page-deco-group {
+    --opacity-text: 1;
+    --pad-side-full: 240px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: var(--pad-side-full) auto auto var(--pad-side-full);
+    grid-template-rows: 50px auto auto 50px;
+    grid-template-areas:
+        "...    ...     ...  title-alt"
+        "...    title   sub  title-alt"
+        "...    title   sub  ..."
+        "...    ...     ...  ...";
+    z-index: -50;
+}
+
+@media screen and (max-width: 1856px) {
+    .page-deco-group {
+        --pad-side-full: 180px;
+    }
+}
+@media screen and (max-width: 1792px) {
+    .page-deco-group {
+        --pad-side-full: 140px;
+    }
+}
+@media screen and (max-width: 1664px) {
+    .page-deco-group {
+        --pad-side-full: 90px;
+    }
+}
+@media screen and (max-width: 1408px) {
+    .page-deco-group {
+        --pad-side-full: 50px;
+    }
+}
+.main {
+    display: unset;
+}
+.alt {
+    display: none;
+}
+@media screen and (max-width: 1280px) {
+    .main{
+        display: none;
+    }
+    .alt {
+        display: unset;
+    }
+    .page-deco-group {
+        padding-top: 1em;
+        padding-bottom: 1em;
+        padding-right: 0.5em;
+    }
+}
+@media screen and (max-width:1024px) {
+    .page-deco-group {
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+        padding-right: 0.25em;
+    }
+}
+@media screen and (max-width:768px) {
+    .page-deco-group {
+        padding-bottom: 6.5em;
+    }
+}
+
+.text {
+    writing-mode: vertical-rl;
+    -webkit-writing-mode: vertical-rl;
+    text-transform: uppercase;
+    opacity: var(--opacity-text);
+    color: var(--color-white);
+    white-space: nowrap;
+}
+
+.title {
+    grid-area: title;
+    font-size: 120px;
+    align-self: start;
+    justify-self: start;
+    font-weight: 700;
+    line-height: 120px;
+}
+
+.sub {
+    grid-area: sub;
+    font-size: 72px;
+    align-self: end;
+    justify-self: end;
+    font-weight: 500;
+    line-height: 72px;
+    text-align: right;
+}
+.title-alt {
+    grid-area: title-alt;
+    justify-self: end;
+    align-self: start;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 36px;
+}

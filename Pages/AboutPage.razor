@@ -1,0 +1,164 @@
+﻿@page "/about"
+@using Alkemic.PortfolioWeb.Models
+@using Microsoft.EntityFrameworkCore
+@using Alkemic.PortfolioWeb.Components.AboutPage
+
+<PageTitle>About Me - juncha9</PageTitle>
+
+<style>
+    * {
+        --color-highlight: @($"{highlightColorValue} !important;")
+    }
+</style>
+
+<div class="background"/>
+<PageDecorator Title="ABOUT ME" Sub="@serif"/>
+<div class="about-page">
+@{
+    
+    if(this.authState == AuthState.Allowed)
+    {
+        if(isLoading == true)
+        {
+                <div class="loading-spinner spinner-border"></div>
+        }
+        else
+        {
+            <div class="content">
+                <HeadContainer />
+                <section class="section">
+                    <div class="section--bg noselect"></div>
+                    <div class="section--title noselect">Development Stacks</div>
+                    <div class="section--content">
+                        <StackGroup Datas=abilityStackEntities></StackGroup>
+                    </div>
+                </section>
+                <section class="section">
+                    <div class="section--bg noselect"></div>
+                    <div class="section--title noselect">History</div>
+                    <div class="section--content">
+                        <CareerGroup Datas=careerEntities></CareerGroup>
+                    </div>
+                </section>        
+            </div>   
+        }
+    }
+}
+</div>
+
+<PageButton Prev=@(new PageData{Link="/project", Name="Project"}) Theme="@Theme.Dark" />
+
+@inherits RestrictPageComponent
+@code {
+
+    [Inject]
+    private ILogger<AboutPage> logger { get; set; }
+
+    [Inject]
+    IDbContextFactory<PortfolioContext> contextFactory { get; set; }
+
+    protected override bool isLoading => base.isLoading || isWaitDB == true;
+
+    private bool isWaitDB = false;
+
+    private List<CareerEntity> careerEntities = new List<CareerEntity>();
+
+    private List<AbilityStackEntity> abilityStackEntities = new List<AbilityStackEntity>();
+
+    private string highlightColorValue
+    {
+        get
+        {
+            if(string.IsNullOrWhiteSpace(highlightColor) == true)
+            {
+                return "var(--color-bg-dark)";
+            }
+            else
+            {
+                return highlightColor;   
+            }
+        }
+    }
+
+    private string highlightColor = "";
+
+    private readonly List<string> highlightColors = new List<string>
+    {
+        "#357EC7",
+        "#8DB600",
+        "#E5004C",
+        "#8042FC",
+        "#FF5E19",
+    };
+
+    private string serif = "";
+
+    private List<string> serifs = new List<string>
+    {
+        "Little by little\nDoes the trick",
+        "Step by step goes\na long way",
+        "Life is a Journey",
+    };
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        isWaitDB = true;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if(firstRender == true)
+        {
+            highlightColor = highlightColors.GetRandomOne();    
+            serif = serifs.GetRandomOne();
+            await LoadEntities();
+        }    
+    }
+
+    private async Task LoadEntities()
+    {
+        try
+        {
+            isWaitDB = true;
+            var _context = await contextFactory.CreateDbContextAsync();
+            if(_context == null) throw new Exception($"Cannot create DB {nameof(PortfolioContext)}");
+
+            var careerQuery = _context.CareerEntities.Include(career => career.Projects.OrderByDescending(project => project.StartDate))
+                                              .ThenInclude(project => project.ProjectStacks.OrderBy(projectStack => projectStack.AbilityStack.Sequence))
+                                              .OrderByDescending(career => career.StartDate);
+#if DEBUG
+            logger.LogDebug($"[{GetType().Name}] *** SQL ***\n{careerQuery.ToQueryString()}\n");
+#endif
+            var _careers = await careerQuery.ToListAsync();
+            careerEntities.Clear();
+            careerEntities.AddRange(_careers);
+
+            var abilityQuery = _context.AbilityStackEntites.Include(abilityStack => abilityStack.ProjectStacks.OrderByDescending(x => x.Project.StartDate))
+                                                     .ThenInclude(projectStack => projectStack.Project)
+                                                     .OrderBy(abilityStack => abilityStack.Sequence);
+#if DEBUG
+            logger.LogDebug($"[{GetType().Name}]\n***SQL***\n{abilityQuery.ToQueryString()}\n");
+#endif
+
+            var _ablities = await abilityQuery.ToListAsync();
+            abilityStackEntities.Clear();
+            abilityStackEntities.AddRange(_ablities);
+#if DEBUG
+            logger.LogDebug($"[{GetType().Name}:{RemoteIP}] Success to load data on DB");
+#endif
+        }
+        catch(Exception ex)
+        {
+            logger.LogError($"[{GetType().Name}:{RemoteIP}] Failed to load data on DB, Ex: {ex}");
+            LogError($"[{GetType().Name}] Failed to load data");
+        }
+        finally
+        {
+            isWaitDB = false;
+            StateHasChanged();
+        }
+    }
+
+}

@@ -1,0 +1,81 @@
+﻿@page "/"
+@page "/index"
+@using Microsoft.EntityFrameworkCore
+@using Newtonsoft.Json.Linq
+@using Alkemic.PortfolioWeb.Components.IndexPage
+
+<PageTitle>Portfolio - juncha9</PageTitle>
+
+<div class="index-page">
+	@if(authState == AuthState.Allowed) 
+	{
+		<div class="cover noselect"></div>
+	}
+	<div id="anim-parent" class="noselect"> </div>
+	<div class="center-item">
+		<Typewriter />
+		<div class="blank noselect" />
+		<LoginPanel />
+	</div>	
+</div>
+
+<AddressViewer /> 
+
+<PageButton 
+Next=@(new PageData{Link="/intro", Name="Introduce"}) 
+Theme="@Theme.Dark" />
+
+@inherits PageComponent
+@code
+{
+	private const string START_ANIM = "fireworkHandler.start";
+	private const string STOP_ANIM = "fireworkHandler.stop";
+
+	private string explainText
+	{
+		get
+		{
+			switch (authState)
+			{
+				case AuthState.None:
+					return "패스코드를 입력해 주세요";
+				default:
+					return "";
+			}
+		}
+	}
+
+	private bool isFireworkStarted = false;
+
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		base.OnAfterRenderAsync(firstRender);
+		if(authState == AuthState.Allowed)
+		{
+			if(isFireworkStarted == false)
+			{
+				isFireworkStarted = true;	
+				await jsRuntime.TryInvokeAction(START_ANIM);
+			}
+		}
+		else
+		{
+			if(isFireworkStarted == true)
+			{
+				isFireworkStarted = false;
+				await jsRuntime.TryInvokeAction(STOP_ANIM);
+			}
+		}
+	}
+
+	public override async ValueTask DisposeAsync()
+	{
+		if(isFireworkStarted == true)
+		{
+			await jsRuntime.TryInvokeAction(STOP_ANIM);
+			isFireworkStarted = false;
+		}
+		await base.DisposeAsync();
+	}
+}
