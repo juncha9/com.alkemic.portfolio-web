@@ -4,13 +4,13 @@ export default class DonutSpaceHandler {
     //const
     canvasID: string = "unity-canvas";
     config = {
-        dataUrl: "donut-space/Build.data",
-        frameworkUrl: "donut-space/Build.framework.js",
-        codeUrl: "donut-space/Build.wasm",
+        dataUrl: "donut-space/Build.data.gz",
+        frameworkUrl: "donut-space/Build.framework.js.gz",
+        codeUrl: "donut-space/Build.wasm.gz",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "AlkemicStudio",
         productName: "com.alkemic.portfolio-space",
-        productVersion: "1.0",
+        productVersion: "1.1.2",
         matchWebGLToCanvasSize: true, // Uncomment this to separately control WebGL canvas render size and DOM element size.
         // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
     }

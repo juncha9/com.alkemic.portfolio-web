@@ -20,12 +20,6 @@
     <PackageReference Include="Npgsql.Json.NET" Version="6.0.3" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="wwwroot\build\Build.data" />
-    <None Include="wwwroot\build\Build.framework.js" />
-    <None Include="wwwroot\build\Build.wasm" />
-  </ItemGroup>
-
   <Target Name="PublishRunWebpack" BeforeTargets="PreBuildEvent">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
       <Exec WorkingDirectory=".\" Command="npm install" />
