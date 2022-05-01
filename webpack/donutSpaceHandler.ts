@@ -4,9 +4,9 @@ export default class DonutSpaceHandler {
     //const
     canvasID: string = "unity-canvas";
     config = {
-        dataUrl: "donut-space/Build.data.gz",
-        frameworkUrl: "donut-space/Build.framework.js.gz",
-        codeUrl: "donut-space/Build.wasm.gz",
+        dataUrl: "donut-space/Build.data.br",
+        frameworkUrl: "donut-space/Build.framework.js.br",
+        codeUrl: "donut-space/Build.wasm.br",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "AlkemicStudio",
         productName: "com.alkemic.portfolio-space",
